@@ -23,7 +23,7 @@ TRUNCATE TABLE STAGE.PLAYER_STATS;
 
 COPY INTO STAGE.PLAYER_STATS
 FROM
-@STAGE.cric_api_stage/player_info/
+@STAGE.cric_api_stage/player_stats/
 FILE_FORMAT = (
 	TYPE = 'JSON',
 	STRIP_OUTER_ARRAY = TRUE

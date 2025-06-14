@@ -9,7 +9,7 @@ player_id_list = get_id("cric_info","cric_data","player_info","PLAYER_ID")
 
 config = get_env_vars()
 
-def get_player_info(config,id_list):
+def get_player_info(api_config,id_list):
     OFFSET = 0
     BATCH = 25
     iteration = 0
@@ -17,7 +17,7 @@ def get_player_info(config,id_list):
         while True:
             try:
                 url = (
-                    f"{config.PLAYER_INFO_API_URL}apikey={config.API_KEY}"
+                    f"{api_config.PLAYER_INFO_API_URL}apikey={api_config.API_KEY}"
                     f"&id={player_id}&offset={OFFSET}"
                 )
                 response = requests.get(url)
@@ -29,9 +29,9 @@ def get_player_info(config,id_list):
 
                     OFFSET += len(response_json)
                     iteration += 1
-                    file_name = generate_file_name("player_info", "json", iteration)
+                    file_name = generate_file_name("player_stats", "json", iteration)
                     write_to_json(response_json, file_name)
-                    upload_file_s3(file_name,config.CRIC_INFO_BUCKET,config.PLAYER_STATS_S3_DEST)
+                    upload_file_s3(file_name,api_config.CRIC_INFO_BUCKET,api_config.PLAYER_STATS_S3_DEST)
                     print(f"Saved batch {iteration} to {file_name}")
                     if len(response_json) < BATCH:
                         print("Final batch received")

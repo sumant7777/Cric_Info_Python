@@ -9,13 +9,11 @@ player_id_list = get_id("cric_info","cric_data","player_info","PLAYER_ID")
 
 config = get_env_vars()
 
-
-def get_player_info(config):
+def get_player_info(config,id_list):
     OFFSET = 0
     BATCH = 25
     iteration = 0
-    player_id_list = get_id("cric_info","cric_data","player_info","PLAYER_ID")
-    for player_id in player_id_list:
+    for player_id in id_list:
         while True:
             try:
                 url = (
@@ -33,7 +31,7 @@ def get_player_info(config):
                     iteration += 1
                     file_name = generate_file_name("player_info", "json", iteration)
                     write_to_json(response_json, file_name)
-                    upload_file_s3(file_name,config.CRIC_INFO_BUCKET,config.PLAYER_INFO_S3_DEST)
+                    upload_file_s3(file_name,config.CRIC_INFO_BUCKET,config.PLAYER_STATS_S3_DEST)
                     print(f"Saved batch {iteration} to {file_name}")
                     if len(response_json) < BATCH:
                         print("Final batch received")
@@ -45,4 +43,4 @@ def get_player_info(config):
                 print(f"An exception occurred for player ID {player_id}: {e}")
                 break
 
-get_player_info(config)
+get_player_info(config,player_id_list)

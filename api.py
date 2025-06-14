@@ -1,15 +1,17 @@
 import requests
-from lib import config,generate_file_name,write_to_json
+from lib import generate_file_name,write_to_json
+from load_env import get_env_vars
 
+config = get_env_vars()
 
-def get_api_response(config):
+def get_api_response(api_config):
     OFFSET = 0
     BATCH = 25
     iteration = 0
     while True:
         try:
             url = (
-                f"{config.series_list_url}?apikey={config.api_key}&offset={OFFSET}"
+                f"{api_config.SERIES_LIST_API_URL}apikey={api_config.API_KEY}&offset={OFFSET}"
             )
             response = requests.get(url)
             if response.status_code == 200:
@@ -30,3 +32,5 @@ def get_api_response(config):
                 break  # Exit the loop if a bad status is returned
         except Exception as e:
             print(f"An exception occured; {e}")
+
+get_api_response(config)

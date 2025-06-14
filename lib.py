@@ -1,7 +1,6 @@
 import json
 
 
-
 def generate_file_name(file_name, file_type, iteration):
     return f"data/{file_name}/{file_name}_{str(iteration).zfill(5)}.{file_type}"
 

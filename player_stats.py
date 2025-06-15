@@ -14,6 +14,12 @@ player_id_list = player_id_list[:100]
 config = get_env_vars()
 
 def get_player_info(api_config,id_list):
+    """
+    this method is used to get the player stats from the Api
+    :param api_config: tuple
+    :param id_list: list
+    :return: str
+    """
     OFFSET = 0
     BATCH = 25
     iteration = 0

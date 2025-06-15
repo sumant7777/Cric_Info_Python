@@ -6,6 +6,10 @@ from get_id import get_id
 
 
 player_id_list = get_id("cric_info","cric_data","player_info","PLAYER_ID")
+player_stats_id_list = get_id("cric_info","cric_data","player_stats","PLAYER_ID")
+
+player_id_list = list(set(player_id_list)-set(player_stats_id_list))
+player_id_list = player_id_list[:100]
 
 config = get_env_vars()
 

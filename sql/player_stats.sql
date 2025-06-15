@@ -29,23 +29,61 @@ FILE_FORMAT = (
 	STRIP_OUTER_ARRAY = TRUE
 );
 
+TRUNCATE TABLE CRIC_DATA.PLAYER_STATS;
+
 
 INSERT INTO CRIC_DATA.PLAYER_STATS
 SELECT
-    PARSE_JSON(PLAYER_STATS):id ::VARCHAR,                       
-    PARSE_JSON(PLAYER_STATS):name ::VARCHAR,          
-    DATE(PARSE_JSON(PLAYER_STATS):dateOfBirth) ::DATE,
-    PARSE_JSON(PLAYER_STATS):role ::VARCHAR,          
-    PARSE_JSON(PLAYER_STATS):battingStyle ::VARCHAR,  
-    PARSE_JSON(PLAYER_STATS):bowlingStyle ::VARCHAR,  
-    PARSE_JSON(PLAYER_STATS):placeOfBirth ::VARCHAR,  
-    PARSE_JSON(PLAYER_STATS):country ::VARCHAR,       
-    PARSE_JSON(PLAYER_STATS):playerImg ::VARCHAR,     
-    s.value:fn::VARCHAR,                        
-    s.value:matchtype::VARCHAR,                       
-    s.value:stat::VARCHAR,                        
-    s.value:value::VARCHAR,
-    CURRENT_TIMESTAMP() AS LOAD_DATE_TIME                    
-FROM 
-    STAGE.PLAYER_STATS
-    , LATERAL FLATTEN(input => PARSE_JSON(PLAYER_STATS):stats) s;
+    PARSE_JSON(PLAYER_STATS):id::VARCHAR AS PLAYER_ID,
+    UPPER(TRIM(PARSE_JSON(PLAYER_STATS):name::VARCHAR)) AS PLAYER_NAME,
+    DATE(PARSE_JSON(PLAYER_STATS):dateOfBirth)::DATE AS BIRTH_DATE,
+    UPPER(TRIM(PARSE_JSON(PLAYER_STATS):role::VARCHAR)) AS PLAYER_ROLE,
+    UPPER(TRIM(PARSE_JSON(PLAYER_STATS):battingStyle::VARCHAR)) AS BATTING_STYLE,
+    UPPER(TRIM(PARSE_JSON(PLAYER_STATS):bowlingStyle::VARCHAR)) AS BOWLING_STYLE,
+    PARSE_JSON(PLAYER_STATS):placeOfBirth::VARCHAR AS BIRTH_PLACE,
+    UPPER(TRIM(PARSE_JSON(PLAYER_STATS):country::VARCHAR)) AS COUNTRY_NAME,
+    PARSE_JSON(PLAYER_STATS):playerImg::VARCHAR AS PLAYER_IMG_URL,
+    UPPER(TRIM(s.value:fn::VARCHAR)) as STAT_TYPE,
+    UPPER(TRIM(s.value:matchtype::VARCHAR)) AS MATCH_TYPE,
+    CASE
+        WHEN TRIM(s.value:stat::VARCHAR) = 'm' THEN 'MATCHES_PLAYED'
+        WHEN TRIM(s.value:stat::VARCHAR) = 'inn' THEN 'INNINGS_PLAYED'
+        WHEN TRIM(s.value:stat::VARCHAR) = 'runs' THEN 'RUNS_SCORED'
+        WHEN TRIM(s.value:stat::VARCHAR) = 'bf' THEN 'BALLS_FACED'
+        WHEN TRIM(s.value:stat::VARCHAR) = 'hs' THEN 'HIGHEST_SCORE'
+        WHEN STAT_TYPE = 'BATTING'
+        AND TRIM(s.value:stat::VARCHAR) = 'avg' THEN 'BATTING_AVERAGE'
+        WHEN STAT_TYPE = 'BOWLING'
+        AND TRIM(s.value:stat::VARCHAR) = 'avg' THEN 'BOWLING_AVERAGE'
+        WHEN STAT_TYPE = 'BATTING'
+        AND TRIM(s.value:stat::VARCHAR) = 'sr' THEN 'BATTING_STRIKE_RATE'
+        WHEN STAT_TYPE = 'BOWLING'
+        AND TRIM(s.value:stat::VARCHAR) = 'sr' THEN 'BOWLING_STRIKE_RATE'
+        WHEN TRIM(s.value:stat::VARCHAR) = 'no' THEN 'NO_OF_NOT_OUTS'
+        WHEN TRIM(s.value:stat::VARCHAR) = '4s' THEN 'NO_OF_FOURS'
+        WHEN TRIM(s.value:stat::VARCHAR) = '6s' THEN 'NO_OF_SIXES'
+        WHEN TRIM(s.value:stat::VARCHAR) = '50' THEN 'NO_OF_FIFTIES'
+        WHEN TRIM(s.value:stat::VARCHAR) = '100' THEN 'NO_OF_HUNDREDS'
+        WHEN TRIM(s.value:stat::VARCHAR) = '200' THEN 'NO_OF_DOUBLE_HUNDREDS'
+        WHEN STAT_TYPE = 'BOWLING'
+        AND TRIM(s.value:stat::VARCHAR) = 'b' THEN 'BALLS_BOWLED'
+        WHEN STAT_TYPE = 'BOWLING'
+        AND TRIM(s.value:stat::VARCHAR) = 'runs' THEN 'RUNS_GIVEN'
+        WHEN STAT_TYPE = 'BOWLING'
+        AND TRIM(s.value:stat::VARCHAR) = 'wkts' THEN 'WICKETS_TAKEN'
+        WHEN STAT_TYPE = 'BOWLING'
+        AND TRIM(s.value:stat::VARCHAR) = 'econ' THEN 'ECONOMY_RATE'
+        WHEN STAT_TYPE = 'BOWLING'
+        AND TRIM(s.value:stat::VARCHAR) = 'bbi' THEN 'BEST_BOWLING_INNINGS'
+        WHEN STAT_TYPE = 'BOWLING'
+        AND TRIM(s.value:stat::VARCHAR) = 'bbm' THEN 'BEST_BOWLING_MATCH'
+        WHEN STAT_TYPE = 'BOWLING'
+        AND TRIM(s.value:stat::VARCHAR) = '5w' THEN 'FIVE_WICKET_HAULS'
+        WHEN STAT_TYPE = 'BOWLING'
+        AND TRIM(s.value:stat::VARCHAR) = '10w' THEN 'TEN_WICKET_HAULS'
+    END AS STAT_NAME,
+    s.value:value::VARCHAR AS STAT_VALUE,
+    CURRENT_TIMESTAMP() AS LOAD_DATE_TIME
+FROM
+    STAGE.PLAYER_STATS,
+    LATERAL FLATTEN(input => PARSE_JSON(PLAYER_STATS):stats) s;

@@ -1,5 +1,4 @@
 from dotenv import load_dotenv
-from load_env import config
 import boto3
 import os
 

@@ -24,10 +24,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-south-1
 
-      - name: 🔎 Verify AWS Identity
-        run: |
-          aws sts get-caller-identity --region ap-south-1
-
       - name: Deploy to S3
         run: |
           echo "Deploying to S3 bucket: cric-info-prod"

@@ -36,9 +36,9 @@ def write_to_json(data: json, file_name: str) -> None:
     :param file_name: name of the file to write
     """
     try:
-        print(f"Writing api data into json file{file_name}")
+        logger.info(f"Writing api data into json file{file_name}")
         with open(f"{file_name}", "w") as json_file:
             json.dump(data, json_file, indent=4)
     except Exception as e:
-        print(f"An exception occurred{e}")
+        logger.error(f"An exception occurred{e}")
         raise e

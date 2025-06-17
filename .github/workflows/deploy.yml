@@ -29,4 +29,4 @@ jobs:
       - name: Deploy to S3
         run: |
           echo "Deploying to S3 bucket: cric-info-prod"
-          aws s3 sync ./CricApi s3://cric-info-prod --delete --region ap-south-1
+          aws s3 sync . s3://cric-info-prod --delete --region ap-south-1

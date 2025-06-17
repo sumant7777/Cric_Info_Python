@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: prod
-      url: https://s3.amazonaws.com/cric-info-prod
+      url: https://s3.ap-south-1.amazonaws.com/cric-info-prod
 
     steps:
       - name: Checkout code

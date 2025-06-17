@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     environment:
       name: prod
       url: https://s3.ap-south-1.amazonaws.com/cric-info-prod
@@ -14,7 +16,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+        
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -24,4 +26,5 @@ jobs:
 
       - name: Deploy to S3
         run: |
-          aws s3 sync ./dist s3://cric-info-prod --delete
+          echo "Deploying to S3 bucket: cric-info-prod"
+          aws s3 sync ./dist s3://cric-info-prod --delete --region ap-south-1

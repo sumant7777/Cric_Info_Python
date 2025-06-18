@@ -44,8 +44,8 @@ def get_player_info(api_config:tuple, id_list:list) -> str:
                     write_to_json(response_json, file_name)
                     upload_file_s3(
                         file_name,
-                        api_config.CRIC_INFO_BUCKET,
                         api_config.PLAYER_STATS_S3_DEST,
+                        api_config.CRIC_INFO_BUCKET
                     )
                     logger.info(f"Saved batch {iteration} to {file_name}")
                     if len(response_json) < BATCH:

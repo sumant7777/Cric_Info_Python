@@ -31,7 +31,7 @@ def get_api_response(api_config):
                 file_name = generate_file_name("matches", "json", iteration)
                 write_to_json(response_json, file_name)
                 logger.info(f"Saved batch {iteration} to {file_name}")
-                upload_file_s3(file_name,config.CRIC_INFO_BUCKET,config.MATCHES_LIST_S3_DEST)
+                upload_file_s3(file_name, config.MATCHES_LIST_S3_DEST, config.CRIC_INFO_BUCKET)
                 if len(response_json) < BATCH:
                     logger.info("Final batch received. Ending loop.")
                     break
@@ -39,7 +39,7 @@ def get_api_response(api_config):
                 logger.exception(f"Request failed with status code {response.status_code}: {url}")
                 break
         except Exception as e:
-            logger.error(f"An exception occured; {e}")
+            logger.error(f"An exception occurred; {e}")
             raise e
 
 get_api_response(config)

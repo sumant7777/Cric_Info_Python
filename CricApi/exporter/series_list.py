@@ -31,7 +31,7 @@ def get_api_response(api_config):
                 file_name = generate_file_name("series", "json", iteration)
                 write_to_json(response_json, file_name)
                 logger.info(f"Saved batch {iteration} to {file_name}")
-                upload_file_s3(file_name,config.CRIC_INFO_BUCKET,config.SERIES_LIST_S3_DEST)
+                upload_file_s3(file_name, config.SERIES_LIST_S3_DEST, config.CRIC_INFO_BUCKET)
                 if len(response_json) < BATCH:
                     logger.info("Final batch received. Ending loop.")
                     break

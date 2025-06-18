@@ -1,4 +1,4 @@
-from snowflake_connector import create_sesion
+from snow import create_session
 from snowflake.snowpark.functions import col
 from lib import logger
 
@@ -12,7 +12,7 @@ def get_id(db_name: str, schema_name: str, table_name: str, column_name: str) ->
     :param column_name: column name
     :return: list of id's
     """
-    session = create_sesion()
+    session = create_session()
     table_df = (
         session.table(f"{db_name}.{schema_name}.{table_name}")
         .select(col(column_name))

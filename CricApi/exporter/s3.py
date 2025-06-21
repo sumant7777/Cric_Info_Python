@@ -120,6 +120,7 @@ def s3_archiver(
     :param dest_bucket_name: Name of the destination S3 bucket.
     :param prefix: Prefix to filter files in the source bucket.
     """
+
     try:
         timestamp_folder = datetime.now().strftime("%Y-%m-%d")
         s3_keys = list_files_s3(src_bucket_name, prefix)

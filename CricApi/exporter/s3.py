@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 import boto3
-from lib import logger
+from util import logger
 from datetime import datetime
 from load_env import get_env_vars
 
@@ -11,7 +11,7 @@ s3 = boto3.client("s3")
 
 
 def upload_file_s3(
-    local_path: str, s3_destination: str, s3_bucket_name: str = config.CRIC_INFO_BUCKET
+        local_path: str, s3_destination: str, s3_bucket_name: str = config.CRIC_INFO_BUCKET
 ):
     """
     Uploads a file to an S3 bucket.
@@ -30,7 +30,7 @@ def upload_file_s3(
 
 
 def download_file_s3(
-    s3_key: str, local_path: str, s3_bucket_name: str = config.CRIC_INFO_BUCKET
+        s3_key: str, local_path: str, s3_bucket_name: str = config.CRIC_INFO_BUCKET
 ):
     """
     Downloads a file from an S3 bucket.
@@ -86,10 +86,10 @@ def delete_file_s3(s3_key: str, s3_bucket_name: str = config.CRIC_INFO_BUCKET):
 
 
 def copy_file_s3(
-    source_key: str,
-    dest_key: str,
-    source_bucket: str = config.CRIC_INFO_BUCKET,
-    dest_bucket: str = config.CRIC_INFO_BUCKET,
+        source_key: str,
+        dest_key: str,
+        source_bucket: str = config.CRIC_INFO_BUCKET,
+        dest_bucket: str = config.CRIC_INFO_BUCKET,
 ):
     """
     Copies a file from one S3 bucket to another.
@@ -110,9 +110,9 @@ def copy_file_s3(
 
 
 def s3_archiver(
-    prefix: str,
-    src_bucket_name: str = config.CRIC_INFO_BUCKET,
-    dest_bucket_name: str = config.CRIC_INFO_BUCKET,
+        prefix: str,
+        src_bucket_name: str = config.CRIC_INFO_BUCKET,
+        dest_bucket_name: str = config.CRIC_INFO_BUCKET,
 ):
     """
     Archives files from one S3 bucket to another with a timestamped folder structure.
@@ -131,9 +131,19 @@ def s3_archiver(
                 dest_bucket_name,
             )
             s3_archive_destination = f"archived/{timestamp_folder}" + key
-            delete_file_s3(src_bucket_name, key)
-            logger.info(f"Deleted {key} from {src_bucket_name}")
+            delete_file_s3(key, src_bucket_name)
             logger.info(f"Archived {key} to {s3_archive_destination}")
     except Exception as e:
         logger.error(f"An error occurred during archiving: {e}")
         raise e
+
+
+def check_file_availability(prefix: str, src_bucket: str = config.CRIC_INFO_BUCKET):
+    """
+    This method is used to check if a file is available. in a bucket with the specified prefix.
+    :param prefix: file_prefix
+    :param src_bucket: s3 bucket name
+    :return: True/False
+    """
+    files = list_files_s3(prefix=prefix, s3_bucket_name=src_bucket)
+    return True if files else False

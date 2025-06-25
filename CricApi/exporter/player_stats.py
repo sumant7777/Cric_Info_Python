@@ -86,4 +86,4 @@ def execute_player_stats(player_config: tuple) -> str:
 if __name__ == "__main__":
     config = get_env_vars()
     result = execute_player_stats(config)
-    logger.info(config)
+    logger.info(result)

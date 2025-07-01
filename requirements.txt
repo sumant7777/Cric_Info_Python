@@ -4,4 +4,5 @@ python-dotenv~=1.1.0
 snowflake~=1.5.1
 requests~=2.32.4
 sqlparse~=0.5.3
+pandas~=2.3.0
 prefect~=3.4.6

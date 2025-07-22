@@ -1,24 +1,21 @@
 import requests
-from datetime import timedelta
 from util import generate_file_name, write_to_json
 from load_env import get_env_vars
 
 from util import logger
-from prefect import task, flow
-from prefect.tasks import task_input_hash
 from s3 import upload_file_s3, s3_archiver, check_file_availability
 from snow import create_session, execute_query, get_count
 
+BATCH = 25
 
-@task(cache_key_fn=task_input_hash, cache_expiration=timedelta(days=1))
-def get_player_info(api_config: tuple, offset: int):
+
+def get_player_info(api_config, offset: int):
     """
     This method is used to get the players list from the Api
     :param api_config:  config
     :param offset:  offset to start from
     :return: players info in json format
     """
-    BATCH = 25
     iteration = 0
     while True:
         try:
@@ -53,7 +50,6 @@ def get_player_info(api_config: tuple, offset: int):
     return "Successfully completed the players list extraction from Api"
 
 
-@task(cache_key_fn=task_input_hash, cache_expiration=timedelta(days=1))
 def load_to_snowflake(file_name: str):
     """
     This method is used to load the players list from the Api
@@ -64,7 +60,6 @@ def load_to_snowflake(file_name: str):
     return "Player info loaded into Snowflake"
 
 
-@task(cache_key_fn=task_input_hash, cache_expiration=timedelta(days=1))
 def archive_files(player_info_config):
     """
     This method is used to archive the processed files in s3
@@ -79,7 +74,6 @@ def archive_files(player_info_config):
     return logger.info("Player info files archived in S3")
 
 
-@flow
 def execute_player_info(player_config) -> str:
     """
     This method is used to execute the matches info retrieval.
